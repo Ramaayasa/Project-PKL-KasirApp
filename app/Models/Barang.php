@@ -18,4 +18,12 @@ class Barang extends Model
         'harga_jual',
         'stok'
     ];
+
+    public function kasir()
+    {
+        return $this->hasMany(Kasir::class);
+    }
+
 }
+
+
