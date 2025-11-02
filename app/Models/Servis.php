@@ -13,13 +13,13 @@ class Servis extends Model
         'nama_pelanggan',
         'no_telepon',
         'alamat',
-        'keterangan',
+        'kelengkapan',
+        'password',
+        'warna_barang',
         'tipe_barang',
         'seri_barang',
         'kontak',
-        'deskripsi',
         'status',
-        'biaya',
         'keluhan',
     ];
 

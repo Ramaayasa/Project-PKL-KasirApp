@@ -77,17 +77,29 @@
                                     <i class="bi bi-box-seam"></i> Detail Barang
                                 </h5>
                                 <div class="row g-3">
-                                    <!-- Tipe Barang -->
+                                    <!-- Tipe Barang Select Box -->
                                     <div class="col-md-6">
                                         <label for="tipe_barang" class="form-label fw-semibold">
                                             Tipe Barang <span class="text-danger">*</span>
                                         </label>
-                                        <input type="text" class="form-control @error('tipe_barang') is-invalid @enderror"
-                                            id="tipe_barang" name="tipe_barang" value="{{ old('tipe_barang') }}"
-                                            placeholder="Contoh: Laptop, HP, TV" required>
+                                        <select class="form-select @error('tipe_barang') is-invalid @enderror"
+                                            id="tipe_barang" name="tipe_barang" required>
+                                            <option value="">-- Pilih Tipe Barang --</option>
+                                            @foreach($kategoriServis as $kat)
+                                                <option value="{{ $kat->nama }}" {{ old('tipe_barang') == $kat->nama ? 'selected' : '' }}>
+                                                    {{ $kat->nama }}
+                                                </option>
+                                            @endforeach
+                                        </select>
                                         @error('tipe_barang')
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
+                                        <small class="text-muted">
+                                            <a href="{{ route('kategori.index', ['tipe' => 'servis']) }}" target="_blank"
+                                                class="text-primary">
+                                                <i class="bi bi-plus-circle"></i> Tambah Kategori Baru
+                                            </a>
+                                        </small>
                                     </div>
 
                                     <!-- Seri Barang -->
@@ -127,46 +139,46 @@
                                         @enderror
                                     </div>
 
-                                    <!-- Keterangan -->
+                                    <!-- Kelengkapan -->
                                     <div class="col-12">
-                                        <label for="keterangan" class="form-label fw-semibold">
-                                            Keterangan Tambahan
+                                        <label for="kelengkapan" class="form-label fw-semibold">
+                                            Kelengkapan
                                         </label>
-                                        <textarea class="form-control @error('keterangan') is-invalid @enderror"
-                                            id="keterangan" name="keterangan" rows="2"
-                                            placeholder="Keterangan tambahan (opsional)">{{ old('keterangan') }}</textarea>
-                                        @error('keterangan')
+                                        <textarea class="form-control @error('kelengkapan') is-invalid @enderror"
+                                            id="kelengkapan" name="kelengkapan" rows="2"
+                                            placeholder="Contoh: Charger, Tas, Dus, Mouse">{{ old('kelengkapan') }}</textarea>
+                                        @error('kelengkapan')
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
                                     </div>
 
-                                    <!-- Deskripsi Perbaikan -->
-                                    <div class="col-12">
-                                        <label for="deskripsi" class="form-label fw-semibold">
-                                            Deskripsi Perbaikan
-                                        </label>
-                                        <textarea class="form-control @error('deskripsi') is-invalid @enderror"
-                                            id="deskripsi" name="deskripsi" rows="2"
-                                            placeholder="Diisi setelah proses servis (opsional)">{{ old('deskripsi') }}</textarea>
-                                        @error('deskripsi')
-                                            <div class="invalid-feedback">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-
-                                    <!-- Biaya & Status -->
+                                    <!-- Password & Warna -->
                                     <div class="col-md-6">
-                                        <label for="biaya" class="form-label fw-semibold">
-                                            Estimasi Biaya (Rp)
+                                        <label for="password" class="form-label fw-semibold">
+                                            Password
                                         </label>
-                                        <input type="number" class="form-control @error('biaya') is-invalid @enderror"
-                                            id="biaya" name="biaya" value="{{ old('biaya') }}" placeholder="0" min="0"
-                                            step="1000">
-                                        @error('biaya')
+                                        <input type="text" class="form-control @error('password') is-invalid @enderror"
+                                            id="password" name="password" value="{{ old('password') }}"
+                                            placeholder="Password barang (jika ada)">
+                                        @error('password')
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
                                     </div>
 
                                     <div class="col-md-6">
+                                        <label for="warna_barang" class="form-label fw-semibold">
+                                            Warna Barang
+                                        </label>
+                                        <input type="text" class="form-control @error('warna_barang') is-invalid @enderror"
+                                            id="warna_barang" name="warna_barang" value="{{ old('warna_barang') }}"
+                                            placeholder="Contoh: Hitam, Silver, Putih">
+                                        @error('warna_barang')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+
+                                    <!-- Status -->
+                                    <div class="col-12">
                                         <label for="status" class="form-label fw-semibold">
                                             Status Servis
                                         </label>
@@ -230,4 +242,6 @@
             font-weight: bold;
         }
     </style>
+    </div>
+    </div>
 @endsection

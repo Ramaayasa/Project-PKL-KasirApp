@@ -9,23 +9,24 @@ class TransaksiDetail extends Model
 {
     use HasFactory;
 
-    protected $table = 'transaksi_details';
+    protected $table = 'transaksi_detail';
 
     protected $fillable = [
         'transaksi_id',
         'barang_id',
         'jumlah',
         'harga',
-        'subtotal',
+        'subtotal'
     ];
 
     protected $casts = [
+        'jumlah' => 'integer',
         'harga' => 'decimal:2',
-        'subtotal' => 'decimal:2',
+        'subtotal' => 'decimal:2'
     ];
 
     /**
-     * Relasi ke transaksi header
+     * Relasi ke transaksi
      */
     public function transaksi()
     {
@@ -38,5 +39,21 @@ class TransaksiDetail extends Model
     public function barang()
     {
         return $this->belongsTo(Barang::class);
+    }
+
+    /**
+     * Accessor untuk format harga
+     */
+    public function getHargaFormatAttribute()
+    {
+        return 'Rp. ' . number_format($this->harga, 0, ',', '.');
+    }
+
+    /**
+     * Accessor untuk format subtotal
+     */
+    public function getSubtotalFormatAttribute()
+    {
+        return 'Rp. ' . number_format($this->subtotal, 0, ',', '.');
     }
 }

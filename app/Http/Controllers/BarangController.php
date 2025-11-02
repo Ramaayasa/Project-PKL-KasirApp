@@ -7,71 +7,78 @@ use Illuminate\Http\Request;
 
 class BarangController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    // Menampilkan daftar barang
     public function index()
     {
-        $barang = Barang::all();
-        return view('barang.index', compact('barang')); 
+        $barangs = Barang::latest()->get();
+        return view('barang.index', compact('barangs'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
+    // Menampilkan form tambah barang
     public function create()
     {
         return view('barang.create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
+    // Menyimpan barang baru
     public function store(Request $request)
     {
         $request->validate([
-            'kode_barang' => 'required|unique:barang,kode_barang|max:50',
-            'nama_barang' => 'required|max:100',
-            'kategori' => 'nullable|max:50',
-            'harga_beli' => 'required|numeric|min:0',
-            'harga_jual' => 'required|numeric|min:0',
+            'nama' => 'required|string|max:255',
+            'kategori' => 'nullable|string|max:100',
             'stok' => 'required|integer|min:0',
+            'harga' => 'required|numeric|min:0',
+            'barcode' => 'nullable|string|max:50|unique:barangs,barcode',
+            'deskripsi' => 'nullable|string',
         ]);
 
-        Barang::create($request->all());
-        return redirect()->route('barang.index')->with('success', 'Barang berhasil ditambahkan.');
+        Barang::create([
+            // kode_barang auto-generate dari Model
+            'nama' => $request->nama,
+            'kategori' => $request->kategori,
+            'stok' => $request->stok,
+            'harga' => $request->harga,
+            'barcode' => $request->barcode,
+            'deskripsi' => $request->deskripsi,
+        ]);
+
+        return redirect()->route('barang.index')
+            ->with('success', 'Barang berhasil ditambahkan!');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function edit(Barang $barang)
+    // Menampilkan form edit
+    public function edit($id)
     {
+        $barang = Barang::findOrFail($id);
         return view('barang.edit', compact('barang'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function update(Request $request, Barang $barang)
+    // Update barang
+    public function update(Request $request, $id)
     {
         $request->validate([
-            'kode_barang' => 'required|max:50|unique:barang,kode_barang,' . $barang->id,
-            'nama_barang' => 'required|max:100',
-            'kategori' => 'nullable|max:50',
-            'harga_beli' => 'required|numeric|min:0',
-            'harga_jual' => 'required|numeric|min:0',
+            'nama' => 'required|string|max:255',
+            'kategori' => 'nullable|string|max:100',
             'stok' => 'required|integer|min:0',
+            'harga' => 'required|numeric|min:0',
+            'barcode' => 'nullable|string|max:50|unique:barangs,barcode,' . $id,
+            'deskripsi' => 'nullable|string',
         ]);
 
+        $barang = Barang::findOrFail($id);
         $barang->update($request->all());
-        return redirect()->route('barang.index')->with('success', 'Barang berhasil diperbarui.');
+
+        return redirect()->route('barang.index')
+            ->with('success', 'Barang berhasil diupdate!');
     }
 
-    public function destroy(Barang $barang)
+    // Hapus barang
+    public function destroy($id)
     {
+        $barang = Barang::findOrFail($id);
         $barang->delete();
-        return redirect()->route('barang.index')->with('success', 'Barang berhasil dihapus.');
-    }
 
+        return redirect()->route('barang.index')
+            ->with('success', 'Barang berhasil dihapus!');
+    }
 }

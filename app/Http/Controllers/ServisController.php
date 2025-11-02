@@ -10,7 +10,12 @@ class ServisController extends Controller
     // Method untuk menampilkan form
     public function create()
     {
-        return view('servis.create');
+        // Ambil kategori servis untuk dropdown/autocomplete
+        $kategoriServis = \App\Models\Kategori::where('tipe', 'servis')
+            ->orderBy('nama', 'asc')
+            ->get();
+
+        return view('servis.create', compact('kategoriServis'));
     }
 
     // Method untuk menyimpan data (SUDAH DIPERBAIKI)
