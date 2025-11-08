@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Barang;
+use App\Models\Kategori;
 use Illuminate\Http\Request;
 
 class BarangController extends Controller
@@ -10,14 +11,16 @@ class BarangController extends Controller
     // Menampilkan daftar barang
     public function index()
     {
-        $barangs = Barang::latest()->get();
+        $barangs = Barang::with('kategori')->latest()->get();
         return view('barang.index', compact('barangs'));
     }
 
     // Menampilkan form tambah barang
     public function create()
     {
-        return view('barang.create');
+        // Ambil kategori barang untuk dropdown
+        $kategoris = Kategori::where('tipe', 'barang')->orderBy('nama', 'asc')->get();
+        return view('barang.create', compact('kategoris'));
     }
 
     // Menyimpan barang baru
@@ -25,7 +28,7 @@ class BarangController extends Controller
     {
         $request->validate([
             'nama' => 'required|string|max:255',
-            'kategori' => 'nullable|string|max:100',
+            'kategori_id' => 'nullable|exists:kategoris,id',
             'stok' => 'required|integer|min:0',
             'harga' => 'required|numeric|min:0',
             'barcode' => 'nullable|string|max:50|unique:barangs,barcode',
@@ -33,9 +36,9 @@ class BarangController extends Controller
         ]);
 
         Barang::create([
-            // kode_barang auto-generate dari Model
+            'kode_barang' => 'item-'.time(),
             'nama' => $request->nama,
-            'kategori' => $request->kategori,
+            'kategori_id' => $request->kategori_id,
             'stok' => $request->stok,
             'harga' => $request->harga,
             'barcode' => $request->barcode,
@@ -50,7 +53,8 @@ class BarangController extends Controller
     public function edit($id)
     {
         $barang = Barang::findOrFail($id);
-        return view('barang.edit', compact('barang'));
+        $kategoris = Kategori::where('tipe', 'barang')->orderBy('nama', 'asc')->get();
+        return view('barang.edit', compact('barang', 'kategoris'));
     }
 
     // Update barang
@@ -58,7 +62,7 @@ class BarangController extends Controller
     {
         $request->validate([
             'nama' => 'required|string|max:255',
-            'kategori' => 'nullable|string|max:100',
+            'kategori_id' => 'nullable|exists:kategoris,id',
             'stok' => 'required|integer|min:0',
             'harga' => 'required|numeric|min:0',
             'barcode' => 'nullable|string|max:50|unique:barangs,barcode,' . $id,
@@ -66,7 +70,14 @@ class BarangController extends Controller
         ]);
 
         $barang = Barang::findOrFail($id);
-        $barang->update($request->all());
+        $barang->update([
+            'nama' => $request->nama,
+            'kategori_id' => $request->kategori_id,
+            'stok' => $request->stok,
+            'harga' => $request->harga,
+            'barcode' => $request->barcode,
+            'deskripsi' => $request->deskripsi,
+        ]);
 
         return redirect()->route('barang.index')
             ->with('success', 'Barang berhasil diupdate!');

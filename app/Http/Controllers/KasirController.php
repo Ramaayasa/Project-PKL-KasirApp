@@ -122,7 +122,6 @@ class KasirController extends Controller
                 'total' => $request->total,
                 'bayar' => $request->bayar,
                 'kembalian' => $request->kembalian,
-                'user_id' => auth()->id() ?? 1,
                 'status' => 'selesai'
             ]);
 

@@ -9,12 +9,23 @@ return new class extends Migration {
     {
         Schema::create('transaksi_details', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('transaksi_id')->constrained('transaksi')->onDelete('cascade');
-            $table->foreignId('barang_id')->constrained('barangs')->onDelete('restrict');
+            $table->unsignedBigInteger('transaksi_id'); // 👈 Jangan pakai foreignId()
+            $table->unsignedBigInteger('barang_id');     // 👈 Jangan pakai foreignId()
             $table->integer('jumlah');
             $table->decimal('harga', 12, 2);
             $table->decimal('subtotal', 12, 2);
             $table->timestamps();
+
+            // Foreign key dengan onDelete cascade (lebih flexible)
+            $table->foreign('transaksi_id')
+                ->references('id')
+                ->on('transaksi')
+                ->onDelete('cascade');
+
+            $table->foreign('barang_id')
+                ->references('id')
+                ->on('barang')
+                ->onDelete('restrict');
         });
     }
 
