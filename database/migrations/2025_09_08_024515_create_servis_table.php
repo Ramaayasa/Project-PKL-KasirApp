@@ -11,10 +11,14 @@ return new class extends Migration {
             $table->id();
             $table->string('kode_servis', 50)->unique();
             $table->string('nama_pelanggan', 100);
-            $table->string('kontak', 50)->nullable();
-            $table->text('deskripsi')->nullable(); // 👈 TAMBAH ->nullable()
+            $table->string('no_telepon', 20)->nullable();
+            $table->text('alamat')->nullable();
+            $table->text('kelengkapan')->nullable();
+            $table->text('password');
+            $table->string('warna_barang', 50);
+            $table->string('tipe_barang', 100);
+            $table->string('seri_barang', 100);
             $table->enum('status', ['pending', 'proses', 'selesai'])->default('pending');
-            $table->decimal('biaya', 12, 2)->nullable();
             $table->text('keluhan');
             $table->timestamps();
         });

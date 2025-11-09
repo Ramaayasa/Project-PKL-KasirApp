@@ -9,8 +9,8 @@ return new class extends Migration {
     {
         Schema::create('transaksi_details', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('transaksi_id'); // 👈 Jangan pakai foreignId()
-            $table->unsignedBigInteger('barang_id');     // 👈 Jangan pakai foreignId()
+            $table->unsignedBigInteger('transaksi_id'); 
+            $table->unsignedBigInteger('barang_id');     
             $table->integer('jumlah');
             $table->decimal('harga', 12, 2);
             $table->decimal('subtotal', 12, 2);
@@ -24,7 +24,7 @@ return new class extends Migration {
 
             $table->foreign('barang_id')
                 ->references('id')
-                ->on('barang')
+                ->on('barangs')
                 ->onDelete('restrict');
         });
     }

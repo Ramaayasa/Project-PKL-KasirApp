@@ -7,10 +7,8 @@ use Illuminate\Http\Request;
 
 class ServisController extends Controller
 {
-    // Method untuk menampilkan form
     public function create()
     {
-        // Ambil kategori servis untuk dropdown/autocomplete
         $kategoriServis = \App\Models\Kategori::where('tipe', 'servis')
             ->orderBy('nama', 'asc')
             ->get();
@@ -18,89 +16,102 @@ class ServisController extends Controller
         return view('servis.create', compact('kategoriServis'));
     }
 
-    // Method untuk menyimpan data (SUDAH DIPERBAIKI)
     public function store(Request $request)
     {
-        // Validasi input
         $request->validate([
             'nama_pelanggan' => 'required|string|max:100',
             'keluhan' => 'required|string',
-            'kontak' => 'nullable|string|max:50',
-            'deskripsi' => 'nullable|string',
-            'biaya' => 'nullable|numeric|min:0',
+            'no_hp' => 'nullable|string|max:20',
+            'tipe_barang' => 'nullable|string|max:100',
+            'seri_barang' => 'nullable|string|max:100',
             'status' => 'nullable|in:pending,proses,selesai',
         ]);
 
-        // Insert data baru (kode_servis akan auto-generate dari Model)
+        // --- FORMAT NOMOR HP OTOMATIS ---
+        $no_hp = preg_replace('/[^0-9]/', '', $request->no_hp); // ambil angka saja
+        if (strpos($no_hp, '0') === 0) {
+            $no_hp = '62' . substr($no_hp, 1);
+        }
+
+        // Generate kode servis
+        $last = Servis::latest()->first();
+        $kode = 'SRV' . now()->format('Ymd') . str_pad(($last ? $last->id + 1 : 1), 4, '0', STR_PAD_LEFT);
+
         Servis::create([
+            'kode_servis' => $kode,
             'nama_pelanggan' => $request->nama_pelanggan,
+            'no_hp' => $no_hp,
+            'alamat' => $request->alamat,
+            'tipe_barang' => $request->tipe_barang,
+            'seri_barang' => $request->seri_barang,
             'keluhan' => $request->keluhan,
-            'kontak' => $request->kontak,
-            'deskripsi' => $request->deskripsi,
-            'biaya' => $request->biaya,
-            'status' => $request->status ?? 'pending',
+            'kelengkapan' => $request->kelengkapan,
+            'password' => $request->password,
+            'warna_barang' => $request->warna_barang,
+            'status' => $request->status ?? 'proses',
         ]);
 
-        return redirect()->route('servis.index')
-            ->with('success', 'Data servis berhasil ditambahkan!');
+        return redirect()->route('servis.index')->with('success', 'Data servis berhasil ditambahkan!');
     }
 
-    // Method untuk menampilkan list
     public function index()
     {
         $servis = Servis::latest()->get();
         return view('servis.index', compact('servis'));
     }
 
-    // Method untuk menampilkan detail
     public function show($id)
     {
         $servis = Servis::findOrFail($id);
         return view('servis.show', compact('servis'));
     }
 
-    // Method untuk menampilkan form edit
     public function edit($id)
     {
         $servis = Servis::findOrFail($id);
-        return view('servis.edit', compact('servis'));
+        $kategoriServis = \App\Models\Kategori::where('tipe', 'servis')
+            ->orderBy('nama', 'asc')
+            ->get();
+        return view('servis.edit', compact('servis', 'kategoriServis'));
     }
 
-    // Method untuk update data
     public function update(Request $request, $id)
     {
         $request->validate([
             'nama_pelanggan' => 'required|string|max:100',
+            'no_hp' => 'nullable|string|max:20',
             'keluhan' => 'required|string',
-            'kontak' => 'nullable|string|max:50',
-            'deskripsi' => 'nullable|string',
-            'biaya' => 'nullable|numeric|min:0',
             'status' => 'nullable|in:pending,proses,selesai',
         ]);
 
         $servis = Servis::findOrFail($id);
 
-        // Update semua field kecuali kode_servis (biar gak berubah)
+        // --- FORMAT NOMOR HP OTOMATIS (UPDATE JUGA) ---
+        $no_hp = preg_replace('/[^0-9]/', '', $request->no_hp);
+        if (strpos($no_hp, '0') === 0) {
+            $no_hp = '62' . substr($no_hp, 1);
+        }
+
         $servis->update([
             'nama_pelanggan' => $request->nama_pelanggan,
+            'no_hp' => $no_hp,
+            'alamat' => $request->alamat,
+            'tipe_barang' => $request->tipe_barang,
+            'seri_barang' => $request->seri_barang,
             'keluhan' => $request->keluhan,
-            'kontak' => $request->kontak,
-            'deskripsi' => $request->deskripsi,
-            'biaya' => $request->biaya,
+            'kelengkapan' => $request->kelengkapan,
+            'password' => $request->password,
+            'warna_barang' => $request->warna_barang,
             'status' => $request->status ?? 'pending',
         ]);
 
-        return redirect()->route('servis.index')
-            ->with('success', 'Data servis berhasil diupdate!');
+        return redirect()->route('servis.index')->with('success', 'Data servis berhasil diupdate!');
     }
 
-    // Method untuk hapus data
     public function destroy($id)
     {
         $servis = Servis::findOrFail($id);
         $servis->delete();
-
-        return redirect()->route('servis.index')
-            ->with('success', 'Data servis berhasil dihapus!');
+        return redirect()->route('servis.index')->with('success', 'Data servis berhasil dihapus!');
     }
 }

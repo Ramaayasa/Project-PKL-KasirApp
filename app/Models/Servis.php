@@ -11,16 +11,15 @@ class Servis extends Model
     protected $fillable = [
         'kode_servis',
         'nama_pelanggan',
-        'no_telepon',
+        'no_hp',
         'alamat',
+        'tipe_barang',
+        'seri_barang',
+        'keluhan',
         'kelengkapan',
         'password',
         'warna_barang',
-        'tipe_barang',
-        'seri_barang',
-        'kontak',
-        'status',
-        'keluhan',
+        'status'
     ];
 
     // Auto-generate kode servis saat create
